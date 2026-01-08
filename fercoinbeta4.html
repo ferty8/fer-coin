@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Fer Coin Simulator</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+body{margin:0;font-family:Arial;background:#020617;color:white}
+header{text-align:center;padding:15px;font-size:26px;font-weight:bold;border-bottom:2px solid #22c55e}
+.container{display:grid;grid-template-columns:360px 1fr;gap:15px;padding:15px}
+.panel{border:1px solid #334155;border-radius:15px;padding:15px}
+input,button,select{width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none;font-weight:bold}
+button{background:#22c55e;cursor:pointer}
+button.danger{background:#ef4444}
+canvas{background:#020617}
+.bigPrice{font-size:36px;font-weight:bold;text-align:center}
+.bigTime{text-align:center;font-size:18px;opacity:.8}
+.green{color:#22c55e}
+.red{color:#ef4444}
+.hidden{display:none}
+table{width:100%;font-size:14px;margin-top:10px}
+th,td{text-align:center;padding:4px}
+</style>
+</head>
+
+<body>
+
+<header>🪙 Fer Coin — Simulador</header>
+
+<!-- LEGAL -->
+<div class="panel" id="legal">
+<h2>⚠️ Aviso</h2>
+<p>Este es un simulador. No usa dinero real.</p>
+<button onclick="aceptarLegal()">Acepto</button>
+</div>
+
+<div class="container hidden" id="app">
+
+<div class="panel">
+
+<!-- LOGIN -->
+<div id="login">
+<input id="userInput" placeholder="Usuario">
+<input id="passInput" type="password" placeholder="Contraseña">
+<button onclick="login()">Entrar / Registrar</button>
+</div>
+
+<!-- USUARIO -->
+<div id="userPanel" class="hidden">
+
+<div class="bigTime" id="hora">--:--:--</div>
+<div class="bigPrice" id="precio">$0.0000</div>
+
+<hr>
+
+<b>👤</b> <span id="userName"></span><br>
+<b>💰</b> $<span id="saldo">0</span><br>
+<b>🪙</b> <span id="coins">0</span>
+
+<button onclick="comprar()">🟢 Comprar</button>
+<button onclick="vender()">🔴 Vender</button>
+
+<hr>
+
+<button onclick="toggleBot()">🤖 Bot PANCRACIOXD</button>
+<select id="botLevel">
+<option value="1">🟢 Fácil</option>
+<option value="2">🟡 Normal</option>
+<option value="3">🔴 Difícil</option>
+</select>
+
+<hr>
+
+<b>🏆 Ranking</b>
+<table>
+<tr><th>Jugador</th><th>💰</th><th>🪙</th></tr>
+<tr><td id="rUser">—</td><td id="rUD">$0</td><td id="rUC">0</td></tr>
+<tr><td>🤖 PANCRACIOXD</td><td id="rBD">$0</td><td id="rBC">0</td></tr>
+</table>
+
+<hr>
+
+<button class="danger" onclick="cerrarSesion()">⛔ Cerrar sesión</button>
+
+</div>
+</div>
+
+<div class="panel">
+<canvas id="grafica"></canvas>
+</div>
+
+</div>
+
+<script>
+/* ====== REFERENCIAS ====== */
+const loginDiv = document.getElementById("login");
+const userPanel = document.getElementById("userPanel");
+const precioEl = document.getElementById("precio");
+const saldoEl = document.getElementById("saldo");
+const coinsEl = document.getElementById("coins");
+
+/* ====== ESTADO ====== */
+let precio=1,prev=1,datos=[],labels=[],MAX=60;
+let chart=null,ultimoSegundo=0;
+let sistemaIniciado=false;
+let botActivo=false;
+let bot={saldo:1000,coins:0};
+
+let user=null,pass=null;
+let saldo=1000,coins=0;
+
+/* ====== LEGAL ====== */
+function aceptarLegal(){
+document.getElementById("legal").style.display="none";
+document.getElementById("app").classList.remove("hidden");
+}
+
+/* ====== LOGIN ====== */
+function login(){
+const u=userInput.value.trim();
+const p=passInput.value.trim();
+if(!u||!p) return alert("Completa todo");
+
+let users=JSON.parse(localStorage.getItem("fer_users")||"{}");
+
+if(!users[u]){
+users[u]={pass:p,saldo:1000,coins:0};
+}else if(users[u].pass!==p){
+return alert("Contraseña incorrecta");
+}
+
+user=u; pass=p;
+saldo=users[u].saldo;
+coins=users[u].coins;
+
+localStorage.setItem("fer_users",JSON.stringify(users));
+
+loginDiv.style.display="none";
+userPanel.classList.remove("hidden");
+userName.innerText=user;
+
+iniciar();
+}
+
+/* ====== SISTEMA ====== */
+function iniciar(){
+if(sistemaIniciado) return;
+sistemaIniciado=true;
+
+chart=new Chart(grafica,{
+type:"line",
+data:{labels,datasets:[{data:datos,borderWidth:3,tension:.3}]},
+options:{animation:false,plugins:{legend:{display:false}},scales:{x:{display:false}}}
+});
+
+ultimoSegundo=Math.floor(Date.now()/1000);
+tick();
+loop();
+}
+
+function loop(){
+const ahora=Math.floor(Date.now()/1000);
+if(ahora!==ultimoSegundo){
+ultimoSegundo=ahora;
+tick();
+}
+requestAnimationFrame(loop);
+}
+
+function tick(){
+prev=precio;
+precio+=(Math.random()-0.5)*0.05;
+precio=Math.max(0.0001,precio);
+precio=parseFloat(precio.toFixed(4));
+
+datos.push(precio);
+labels.push(new Date().toLocaleTimeString("es-MX",{timeZone:"America/Mexico_City",hour12:false}));
+if(datos.length>MAX){datos.shift();labels.shift();}
+
+chart.data.datasets[0].borderColor=precio>=prev?"#22c55e":"#ef4444";
+chart.update();
+
+precioEl.innerText="$"+precio.toFixed(4);
+precioEl.className="bigPrice "+(precio>=prev?"green":"red");
+hora.innerText=labels.at(-1);
+
+if(botActivo) botTick();
+guardar();
+ranking();
+}
+
+/* ====== BOT ====== */
+function toggleBot(){botActivo=!botActivo;}
+function botTick(){
+let lvl=+botLevel.value;
+let r=Math.random();
+if(lvl===1&&r<0.3) botBuy();
+if(lvl===2&&r<0.4&&precio<prev) botBuy();
+if(lvl===3&&r<0.5&&precio<prev*0.995) botBuy();
+if(r>0.7&&bot.coins>0) botSell();
+}
+function botBuy(){if(bot.saldo>=precio){bot.saldo-=precio;bot.coins++;}}
+function botSell(){bot.coins--;bot.saldo+=precio;}
+
+/* ====== TRADING ====== */
+function comprar(){if(saldo>=precio){saldo-=precio;coins++;}}
+function vender(){if(coins>0){coins--;saldo+=precio;}}
+
+/* ====== GUARDAR ====== */
+function guardar(){
+let users=JSON.parse(localStorage.getItem("fer_users"));
+users[user]={pass, saldo, coins};
+localStorage.setItem("fer_users",JSON.stringify(users));
+}
+
+/* ====== RANKING ====== */
+function ranking(){
+saldoEl.innerText=saldo.toFixed(2);
+coinsEl.innerText=coins;
+rUser.innerText=user;
+rUD.innerText="$"+saldo.toFixed(2);
+rUC.innerText=coins;
+rBD.innerText="$"+bot.saldo.toFixed(2);
+rBC.innerText=bot.coins;
+}
+
+/* ====== CERRAR SESIÓN ====== */
+function cerrarSesion(){
+if(!confirm("¿Seguro que quieres cerrar sesión?")) return;
+
+location.reload(); // forma más segura: reinicia todo el sistema
+}
+</script>
+
+</body>
+</html>
