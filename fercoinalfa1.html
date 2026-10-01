@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fer Coin 2.0</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#020617;
+    color:white;
+}
+
+header{
+    text-align:center;
+    padding:20px;
+    font-size:28px;
+    font-weight:bold;
+    border-bottom:2px solid #22c55e;
+    background:#030a16;
+}
+
+header small{
+    display:block;
+    margin-top:6px;
+    font-size:13px;
+    opacity:.65;
+    font-weight:normal;
+}
+
+.panel{
+    border:1px solid #334155;
+    border-radius:15px;
+    padding:18px;
+    background:#07101f;
+}
+
+#legal{
+    max-width:650px;
+    margin:35px auto;
+}
+
+.container{
+    display:grid;
+    grid-template-columns:380px minmax(0,1fr);
+    gap:15px;
+    padding:15px;
+    max-width:1450px;
+    margin:auto;
+}
+
+input,
+button,
+select{
+    width:100%;
+    padding:11px;
+    margin:5px 0;
+    border-radius:10px;
+    border:none;
+    font-weight:bold;
+}
+
+input,
+select{
+    background:#111827;
+    color:white;
+    border:1px solid #334155;
+}
+
+button{
+    background:#22c55e;
+    color:#020617;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.85;
+}
+
+button.red{
+    background:#ef4444;
+    color:white;
+}
+
+button.blue{
+    background:#3b82f6;
+    color:white;
+}
+
+.hidden{
+    display:none;
+}
+
+.bigTime{
+    text-align:center;
+    font-size:17px;
+    opacity:.7;
+}
+
+.bigPrice{
+    text-align:center;
+    font-size:38px;
+    font-weight:bold;
+}
+
+.green{
+    color:#22c55e !important;
+}
+
+.redText{
+    color:#ef4444 !important;
+}
+
+.yellow{
+    color:#facc15;
+}
+
+.asset{
+    margin-top:15px;
+    padding:15px;
+    border:1px solid #334155;
+    border-radius:12px;
+    background:#0b1425;
+}
+
+.asset h3{
+    margin-top:0;
+}
+
+.price{
+    font-size:30px;
+    font-weight:bold;
+    margin:8px 0;
+    transition:color .3s;
+}
+
+#precioGrande{
+    display:inline-block;
+    font-size:30px;
+    font-weight:bold;
+    margin-top:7px;
+    transition:color .3s;
+}
+
+.info{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:8px 0;
+    border-bottom:1px solid #1e293b;
+}
+
+.stat{
+    margin-top:10px;
+    padding:12px;
+    border-radius:10px;
+    background:#111827;
+}
+
+.company-description{
+    line-height:1.5;
+    opacity:.85;
+}
+
+.company-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:12px;
+}
+
+.company-grid div{
+    background:#111827;
+    padding:10px;
+    border-radius:9px;
+}
+
+.company-grid span{
+    display:block;
+    font-size:12px;
+    opacity:.65;
+}
+
+.company-grid strong{
+    display:block;
+    margin-top:4px;
+}
+
+.project-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+}
+
+.project-list span{
+    background:#172033;
+    border:1px solid #334155;
+    padding:7px 9px;
+    border-radius:8px;
+    font-size:13px;
+}
+
+.news{
+    margin-top:10px;
+    padding:12px;
+    border-left:3px solid #22c55e;
+    background:#111827;
+    border-radius:7px;
+    line-height:1.4;
+}
+
+.market-panel{
+    min-width:0;
+}
+
+.chart-container{
+    position:relative;
+    width:100%;
+    height:480px;
+    margin-top:15px;
+}
+
+#grafica{
+    width:100% !important;
+    height:100% !important;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,
+td{
+    padding:8px;
+    text-align:center;
+    border-bottom:1px solid #334155;
+}
+
+.warning{
+    color:#facc15;
+    font-size:13px;
+}
+
+.success{
+    color:#22c55e;
+}
+
+.footer-note{
+    text-align:center;
+    opacity:.5;
+    font-size:12px;
+    margin-top:20px;
+}
+
+.market-status{
+    text-align:center;
+    padding:15px;
+    border-radius:10px;
+    background:#111827;
+    margin-top:10px;
+}
+
+.countdown{
+    text-align:center;
+    margin-top:8px;
+    font-size:13px;
+    opacity:.7;
+}
+
+.real-company{
+    border:1px solid #22c55e;
+}
+
+.simulated{
+    border:1px solid #3b82f6;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    margin-bottom:8px;
+}
+
+.badge-real{
+    background:#14532d;
+    color:#86efac;
+}
+
+.badge-simulated{
+    background:#172554;
+    color:#93c5fd;
+}
+
+@media(max-width:850px){
+
+    .container{
+        grid-template-columns:1fr;
+    }
+
+    header{
+        font-size:23px;
+    }
+
+    .chart-container{
+        height:350px;
+    }
+
+}
+
+@media(max-width:500px){
+
+    .container{
+        padding:8px;
+    }
+
+    .panel{
+        padding:13px;
+    }
+
+    .company-grid{
+        grid-template-columns:1fr;
+    }
+
+    .chart-container{
+        height:300px;
+    }
+
+    .bigPrice{
+        font-size:32px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<header>
+
+    Fer Coin 2.0
+
+    <small>
+        Simulador financiero de FER EMPRESAS
+    </small>
+
+</header>
+
+
+<!-- =====================================================
+     AVISO INICIAL
+===================================================== -->
+
+<div class="panel" id="legal">
+
+    <h2>Fer Coin</h2>
+
+    <p>
+        Bienvenido a Fer Coin, el simulador financiero
+        del ecosistema de FER EMPRESAS.
+    </p>
+
+    <p>
+        FER EMPRESAS es un proyecto empresarial real.
+        Esta aplicación solamente simula un mercado financiero.
+    </p>
+
+    <p>
+        El dinero, las acciones, los precios y las operaciones
+        que aparecen dentro de Fer Coin son virtuales.
+    </p>
+
+    <p class="warning">
+        Este simulador no utiliza dinero real.
+    </p>
+
+    <button onclick="aceptarLegal()">
+        Aceptar y continuar
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     APLICACIÓN
+===================================================== -->
+
+<div class="container hidden" id="app">
+
+
+<!-- =====================================================
+     PANEL IZQUIERDO
+===================================================== -->
+
+<div class="panel">
+
+
+<!-- LOGIN -->
+
+<div id="login">
+
+    <h2>Cuenta</h2>
+
+    <input
+        id="userInput"
+        placeholder="Usuario"
+        autocomplete="off"
+    >
+
+    <input
+        id="passInput"
+        type="password"
+        placeholder="Contraseña"
+    >
+
+    <button onclick="login()">
+        Entrar / Registrar
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     PANEL DEL USUARIO
+===================================================== -->
+
+<div id="userPanel" class="hidden">
+
+    <div class="bigTime" id="hora">
+        --:--:--
+    </div>
+
+    <hr>
+
+    <h2 id="userName">
+        Usuario
+    </h2>
+
+
+    <!-- DINERO -->
+
+    <div class="stat">
+
+        Dinero virtual disponible:
+
+        <br>
+
+        <strong>
+            $<span id="saldo">0.00</span>
+        </strong>
+
+    </div>
+
+
+    <!-- FER COIN -->
+
+    <div class="asset simulated">
+
+        <span class="badge badge-simulated">
+            SIMULADO
+        </span>
+
+        <h3>
+            FER COIN
+        </h3>
+
+        <div
+            class="price"
+            id="precioCoin"
+        >
+            $1.0000
+        </div>
+
+        <div class="info">
+
+            <span>
+                Monedas
+            </span>
+
+            <strong id="coins">
+                0
+            </strong>
+
+        </div>
+
+        <button onclick="comprarCoin()">
+            Comprar FER COIN
+        </button>
+
+        <button
+            class="red"
+            onclick="venderCoin()"
+        >
+            Vender FER COIN
+        </button>
+
+    </div>
+
+
+    <!-- FER EMPRESAS -->
+
+    <div class="asset simulated">
+
+        <span class="badge badge-simulated">
+            MERCADO SIMULADO
+        </span>
+
+        <h3>
+            Acciones de FER EMPRESAS
+        </h3>
+
+        <div
+            class="price"
+            id="precioAccion"
+        >
+            $100.00
+        </div>
+
+        <div
+            id="movimiento"
+            class="yellow"
+        >
+            Sin cambios
+        </div>
+
+        <div class="info">
+
+            <span>
+                Acciones
+            </span>
+
+            <strong id="acciones">
+                0
+            </strong>
+
+        </div>
+
+        <button onclick="comprarAccion()">
+            Comprar acción
+        </button>
+
+        <button
+            class="red"
+            onclick="venderAccion()"
+        >
+            Vender acción
+        </button>
+
+    </div>
+
+
+    <!-- PATRIMONIO -->
+
+    <div class="stat">
+
+        Patrimonio dentro del simulador:
+
+        <br>
+
+        <strong>
+            $<span id="patrimonio">
+                0.00
+            </span>
+        </strong>
+
+    </div>
+
+
+    <!-- =================================================
+         INFORMACIÓN REAL DE FER EMPRESAS
+    ================================================== -->
+
+    <div class="asset real-company">
+
+        <span class="badge badge-real">
+            EMPRESA / PROYECTO REAL
+        </span>
+
+        <h3>
+            FER EMPRESAS
+        </h3>
+
+        <p class="company-description">
+
+            FER EMPRESAS es el proyecto empresarial
+            que reúne diferentes iniciativas creativas,
+            cinematográficas, tecnológicas y digitales.
+
+        </p>
+
+        <p class="company-description">
+
+            La información sobre la existencia y los
+            proyectos de FER EMPRESAS corresponde al
+            proyecto real. Lo que se simula en esta
+            aplicación es exclusivamente el mercado
+            financiero.
+
+        </p>
+
+
+        <div class="company-grid">
+
+            <div>
+
+                <span>
+                    Fundación
+                </span>
+
+                <strong>
+                    2023
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Fundador
+                </span>
+
+                <strong>
+                    Fernando Blancas Salado
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Sector
+                </span>
+
+                <strong>
+                    Cine y tecnología
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Proyectos
+                </span>
+
+                <strong>
+                    13
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Principales
+                </span>
+
+                <strong>
+                    3
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Digitales
+                </span>
+
+                <strong>
+                    9
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <hr>
+
+
+        <h4>
+            Proyectos destacados
+        </h4>
+
+
+        <div class="project-list">
+
+            <span>
+                Cine Laptop
+            </span>
+
+            <span>
+                Fer Games
+            </span>
+
+            <span>
+                Start Kids
+            </span>
+
+            <span>
+                Fer Empresa
+            </span>
+
+            <span>
+                Libros FerX
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         DATOS DEL SIMULADOR
+    ================================================== -->
+
+    <div class="asset simulated">
+
+        <span class="badge badge-simulated">
+            DATOS SIMULADOS
+        </span>
+
+        <h3>
+            Mercado de FER
+        </h3>
+
+        <div class="info">
+
+            <span>
+                Clave
+            </span>
+
+            <strong>
+                FER
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+                Acciones simuladas
+            </span>
+
+            <strong>
+                1,000,000
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+                Precio inicial
+            </span>
+
+            <strong>
+                $100.00
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+                Actualización
+            </span>
+
+            <strong>
+                Cada 5 segundos
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+                Dinero
+            </span>
+
+            <strong>
+                Virtual
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         NOTICIAS
+    ================================================== -->
+
+    <div class="asset">
+
+        <h3>
+            Noticias
+        </h3>
+
+        <div
+            class="news"
+            id="noticia"
+        >
+            FER EMPRESAS continúa desarrollando
+            nuevos proyectos.
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         BOT
+    ================================================== -->
+
+    <div class="asset">
+
+        <h3>
+            PANCRACIOXD
+        </h3>
+
+        <button
+            class="blue"
+            onclick="toggleBot()"
+        >
+            Activar / Desactivar Bot
+        </button>
+
+        <select id="botLevel">
+
+            <option value="1">
+                Fácil
+            </option>
+
+            <option value="2">
+                Normal
+            </option>
+
+            <option value="3">
+                Difícil
+            </option>
+
+        </select>
+
+
+        <div class="stat">
+
+            Dinero:
+
+            $<span id="botSaldo">
+                1000.00
+            </span>
+
+            <br>
+
+            Acciones:
+
+            <span id="botAcciones">
+                0
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         RANKING
+    ================================================== -->
+
+    <div class="asset">
+
+        <h3>
+            Ranking
+        </h3>
+
+        <table>
+
+            <tr>
+
+                <th>
+                    Jugador
+                </th>
+
+                <th>
+                    Patrimonio
+                </th>
+
+            </tr>
+
+            <tr>
+
+                <td id="rUser">
+                    —
+                </td>
+
+                <td id="rUserPat">
+                    $0
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>
+                    PANCRACIOXD
+                </td>
+
+                <td id="rBotPat">
+                    $1000
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <button
+        class="red"
+        onclick="cerrarSesion()"
+    >
+        Cerrar sesión
+    </button>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     MERCADO
+===================================================== -->
+
+<div class="panel market-panel">
+
+    <h2>
+        Mercado FER
+    </h2>
+
+
+    <div class="market-status">
+
+        <span class="badge badge-simulated">
+            MERCADO SIMULADO
+        </span>
+
+        <br>
+
+        <strong>
+            Precio simulado de FER EMPRESAS
+        </strong>
+
+        <br>
+
+        <span id="precioGrande">
+            $100.00
+        </span>
+
+        <br>
+
+        <small id="estadoMercado">
+            Mercado activo
+        </small>
+
+        <div class="countdown">
+
+            Próxima actualización en:
+
+            <strong id="cuentaRegresiva">
+                5
+            </strong>
+
+            segundos
+
+        </div>
+
+    </div>
+
+
+    <!-- GRÁFICA -->
+
+    <div class="chart-container">
+
+        <canvas id="grafica"></canvas>
+
+    </div>
+
+
+    <!-- REGLAS -->
+
+    <div class="asset simulated">
+
+        <span class="badge badge-simulated">
+            SIMULACIÓN
+        </span>
+
+        <h3>
+            Reglas del mercado
+        </h3>
+
+        <div class="info">
+
+            <span>
+                Actualización
+            </span>
+
+            <strong>
+                Cada 5 segundos
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+                Movimiento máximo
+            </span>
+
+            <strong class="green">
+                +$10.00
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+                Movimiento mínimo
+            </span>
+
+            <strong class="redText">
+                -$10.00
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+                Precio mínimo simulado
+            </span>
+
+            <strong>
+                $1.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACLARACIÓN -->
+
+    <div class="asset">
+
+        <h3>
+            Importante
+        </h3>
+
+        <p class="company-description">
+
+            FER EMPRESAS es el proyecto real que
+            representa esta aplicación.
+
+        </p>
+
+        <p class="company-description">
+
+            Sin embargo, Fer Coin NO representa una
+            bolsa de valores real.
+
+        </p>
+
+        <p class="company-description">
+
+            El precio mostrado, las acciones, las
+            compras, las ventas, las ganancias y las
+            pérdidas son exclusivamente elementos
+            del simulador.
+
+        </p>
+
+        <p class="company-description">
+
+            Por lo tanto, el valor que aparece en
+            esta gráfica no debe interpretarse como
+            una valoración financiera real de
+            FER EMPRESAS.
+
+        </p>
+
+    </div>
+
+
+    <div class="footer-note">
+
+        Fer Coin 2.0 · FER EMPRESAS · Simulador sin dinero real
+
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const legal =
+document.getElementById("legal");
+
+const app =
+document.getElementById("app");
+
+const loginDiv =
+document.getElementById("login");
+
+const userPanel =
+document.getElementById("userPanel");
+
+const userInput =
+document.getElementById("userInput");
+
+const passInput =
+document.getElementById("passInput");
+
+const saldoEl =
+document.getElementById("saldo");
+
+const coinsEl =
+document.getElementById("coins");
+
+const accionesEl =
+document.getElementById("acciones");
+
+const precioAccionEl =
+document.getElementById("precioAccion");
+
+const precioCoinEl =
+document.getElementById("precioCoin");
+
+const patrimonioEl =
+document.getElementById("patrimonio");
+
+const movimientoEl =
+document.getElementById("movimiento");
+
+const horaEl =
+document.getElementById("hora");
+
+const botSaldoEl =
+document.getElementById("botSaldo");
+
+const botAccionesEl =
+document.getElementById("botAcciones");
+
+const rUserEl =
+document.getElementById("rUser");
+
+const rUserPatEl =
+document.getElementById("rUserPat");
+
+const rBotPatEl =
+document.getElementById("rBotPat");
+
+const precioGrande =
+document.getElementById("precioGrande");
+
+const estadoMercado =
+document.getElementById("estadoMercado");
+
+const noticia =
+document.getElementById("noticia");
+
+const cuentaRegresiva =
+document.getElementById("cuentaRegresiva");
+
+
+/* =====================================================
+   ESTADO
+===================================================== */
+
+let user = null;
+
+let pass = null;
+
+let saldo = 1000;
+
+let coins = 0;
+
+let acciones = 0;
+
+
+/* FER COIN */
+
+let precioCoin = 1;
+
+
+/* FER EMPRESAS */
+
+let precioAccion = 100;
+
+let precioAnterior = 100;
+
+
+/* BOT */
+
+let bot = {
+
+    saldo:1000,
+
+    acciones:0,
+
+    coins:0
+
+};
+
+let botActivo = false;
+
+
+/* SISTEMA */
+
+let sistemaIniciado = false;
+
+
+/* CONTADOR */
+
+let segundosRestantes = 5;
+
+
+/* =====================================================
+   GRÁFICA
+===================================================== */
+
+let datos = [];
+
+let labels = [];
+
+
+const canvas =
+document.getElementById("grafica");
+
+
+const chart =
+new Chart(canvas,{
+
+    type:"line",
+
+    data:{
+
+        labels:labels,
+
+        datasets:[{
+
+            label:"FER EMPRESAS - SIMULACIÓN",
+
+            data:datos,
+
+            borderWidth:3,
+
+            tension:.3,
+
+            pointRadius:3,
+
+            fill:true,
+
+            borderColor:"#22c55e",
+
+            backgroundColor:"rgba(34,197,94,.12)"
+
+        }]
+
+    },
+
+    options:{
+
+        responsive:true,
+
+        maintainAspectRatio:false,
+
+        animation:false,
+
+        interaction:{
+
+            intersect:false,
+
+            mode:"index"
+
+        },
+
+        plugins:{
+
+            legend:{
+
+                display:true
+
+            }
+
+        },
+
+        scales:{
+
+            x:{
+
+                ticks:{
+
+                    color:"#94a3b8"
+
+                },
+
+                grid:{
+
+                    color:"#1e293b"
+
+                }
+
+            },
+
+            y:{
+
+                ticks:{
+
+                    color:"#94a3b8",
+
+                    callback:function(value){
+
+                        return "$"+value;
+
+                    }
+
+                },
+
+                grid:{
+
+                    color:"#1e293b"
+
+                }
+
+            }
+
+        }
+
+    }
+
+});
+
+
+/* =====================================================
+   ACEPTAR
+===================================================== */
+
+function aceptarLegal(){
+
+    legal.style.display="none";
+
+    app.classList.remove("hidden");
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function login(){
+
+    const u =
+    userInput.value.trim();
+
+    const p =
+    passInput.value.trim();
+
+
+    if(!u || !p){
+
+        alert(
+            "Completa usuario y contraseña."
+        );
+
+        return;
+
+    }
+
+
+    let users =
+    JSON.parse(
+        localStorage.getItem("fer_users") || "{}"
+    );
+
+
+    if(!users[u]){
+
+        users[u]={
+
+            pass:p,
+
+            saldo:1000,
+
+            coins:0,
+
+            acciones:0
+
+        };
+
+    }
+
+    else if(users[u].pass !== p){
+
+        alert(
+            "Contraseña incorrecta."
+        );
+
+        return;
+
+    }
+
+
+    user=u;
+
+    pass=p;
+
+
+    saldo =
+    Number(users[u].saldo ?? 1000);
+
+    coins =
+    Number(users[u].coins ?? 0);
+
+    acciones =
+    Number(users[u].acciones ?? 0);
+
+
+    localStorage.setItem(
+        "fer_users",
+        JSON.stringify(users)
+    );
+
+
+    loginDiv.style.display="none";
+
+    userPanel.classList.remove("hidden");
+
+
+    document.getElementById(
+        "userName"
+    ).innerText =
+    user;
+
+
+    iniciar();
+
+    actualizarUI();
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+function iniciar(){
+
+    if(sistemaIniciado)
+        return;
+
+
+    sistemaIniciado=true;
+
+
+    agregarPunto();
+
+
+    actualizarHora();
+
+
+    setInterval(
+        actualizarHora,
+        1000
+    );
+
+
+    /*
+       MERCADO:
+       ACTUALIZACIÓN CADA 5 SEGUNDOS
+    */
+
+    setInterval(
+
+        function(){
+
+            segundosRestantes--;
+
+            if(segundosRestantes <= 0){
+
+                segundosRestantes=5;
+
+                cambiarPrecio();
+
+            }
+
+            cuentaRegresiva.innerText =
+            segundosRestantes;
+
+        },
+
+        1000
+
+    );
+
+}
+
+
+/* =====================================================
+   RELOJ
+===================================================== */
+
+function actualizarHora(){
+
+    const ahora =
+    new Date();
+
+
+    horaEl.innerText =
+    ahora.toLocaleTimeString(
+
+        "es-MX",
+
+        {
+
+            hour12:false,
+
+            timeZone:
+            "America/Mexico_City"
+
+        }
+
+    );
+
+}
+
+
+/* =====================================================
+   CAMBIAR PRECIO
+===================================================== */
+
+function cambiarPrecio(){
+
+    precioAnterior =
+    precioAccion;
+
+
+    /*
+       MOVIMIENTO SIMULADO
+       ENTRE -10 Y +10
+    */
+
+    const cambio =
+    Math.random() * 20 - 10;
+
+
+    precioAccion +=
+    cambio;
+
+
+    /*
+       PRECIO MÍNIMO
+    */
+
+    precioAccion =
+    Math.max(
+        1,
+        precioAccion
+    );
+
+
+    precioAccion =
+    Number(
+        precioAccion.toFixed(2)
+    );
+
+
+    const diferencia =
+    Number(
+        (precioAccion - precioAnterior)
+        .toFixed(2)
+    );
+
+
+    /* =================================================
+       SUBE
+    ================================================== */
+
+    if(diferencia > 0){
+
+        movimientoEl.innerText =
+        "▲ +$" +
+        diferencia.toFixed(2);
+
+
+        movimientoEl.className =
+        "green";
+
+
+        precioAccionEl.className =
+        "price green";
+
+
+        precioGrande.className =
+        "green";
+
+
+        estadoMercado.innerText =
+        "FER EMPRESAS está subiendo";
+
+
+        chart.data.datasets[0]
+        .borderColor =
+        "#22c55e";
+
+
+        chart.data.datasets[0]
+        .backgroundColor =
+        "rgba(34,197,94,.12)";
+
+    }
+
+
+    /* =================================================
+       BAJA
+    ================================================== */
+
+    else if(diferencia < 0){
+
+        movimientoEl.innerText =
+        "▼ -$" +
+        Math.abs(diferencia).toFixed(2);
+
+
+        movimientoEl.className =
+        "redText";
+
+
+        precioAccionEl.className =
+        "price redText";
+
+
+        precioGrande.className =
+        "redText";
+
+
+        estadoMercado.innerText =
+        "FER EMPRESAS está bajando";
+
+
+        chart.data.datasets[0]
+        .borderColor =
+        "#ef4444";
+
+
+        chart.data.datasets[0]
+        .backgroundColor =
+        "rgba(239,68,68,.12)";
+
+    }
+
+
+    else{
+
+        movimientoEl.innerText =
+        "Sin cambios";
+
+        estadoMercado.innerText =
+        "FER EMPRESAS sin cambios";
+
+    }
+
+
+    agregarPunto();
+
+
+    generarNoticia(
+        diferencia
+    );
+
+
+    if(botActivo){
+
+        botTick();
+
+    }
+
+
+    guardar();
+
+    actualizarUI();
+
+}
+
+
+/* =====================================================
+   GRÁFICA
+===================================================== */
+
+function agregarPunto(){
+
+    datos.push(
+        precioAccion
+    );
+
+
+    labels.push(
+
+        new Date().toLocaleTimeString(
+
+            "es-MX",
+
+            {
+
+                hour12:false,
+
+                timeZone:
+                "America/Mexico_City",
+
+                hour:"2-digit",
+
+                minute:"2-digit",
+
+                second:"2-digit"
+
+            }
+
+        )
+
+    );
+
+
+    if(datos.length > 60){
+
+        datos.shift();
+
+        labels.shift();
+
+    }
+
+
+    chart.update();
+
+}
+
+
+/* =====================================================
+   NOTICIAS
+===================================================== */
+
+function generarNoticia(diferencia){
+
+    const positivas = [
+
+        "FER EMPRESAS continúa desarrollando nuevos proyectos.",
+
+        "Cine Laptop avanza en nuevos proyectos audiovisuales.",
+
+        "Fer Games continúa desarrollando experiencias digitales.",
+
+        "FER EMPRESAS amplía su ecosistema creativo.",
+
+        "Nuevas ideas entran en desarrollo dentro del ecosistema."
+
+    ];
+
+
+    const negativas = [
+
+        "El mercado simulado de FER registra una caída.",
+
+        "El precio simulado de FER presenta un movimiento negativo.",
+
+        "El mercado virtual registra presión vendedora.",
+
+        "Los inversionistas virtuales reaccionan ante el movimiento del mercado."
+
+    ];
+
+
+    const lista =
+    diferencia >= 0
+    ? positivas
+    : negativas;
+
+
+    noticia.innerText =
+    lista[
+        Math.floor(
+            Math.random() *
+            lista.length
+        )
+    ];
+
+}
+
+
+/* =====================================================
+   FER COIN
+===================================================== */
+
+function comprarCoin(){
+
+    if(saldo < precioCoin){
+
+        alert(
+            "No tienes suficiente dinero virtual."
+        );
+
+        return;
+
+    }
+
+
+    saldo -=
+    precioCoin;
+
+    coins++;
+
+
+    guardar();
+
+    actualizarUI();
+
+}
+
+
+function venderCoin(){
+
+    if(coins <= 0){
+
+        alert(
+            "No tienes FER COIN."
+        );
+
+        return;
+
+    }
+
+
+    coins--;
+
+    saldo +=
+    precioCoin;
+
+
+    guardar();
+
+    actualizarUI();
+
+}
+
+
+/* =====================================================
+   ACCIONES
+===================================================== */
+
+function comprarAccion(){
+
+    if(saldo < precioAccion){
+
+        alert(
+            "No tienes suficiente dinero virtual."
+        );
+
+        return;
+
+    }
+
+
+    saldo -=
+    precioAccion;
+
+    acciones++;
+
+
+    guardar();
+
+    actualizarUI();
+
+}
+
+
+function venderAccion(){
+
+    if(acciones <= 0){
+
+        alert(
+            "No tienes acciones simuladas."
+        );
+
+        return;
+
+    }
+
+
+    acciones--;
+
+    saldo +=
+    precioAccion;
+
+
+    guardar();
+
+    actualizarUI();
+
+}
+
+
+/* =====================================================
+   BOT
+===================================================== */
+
+function toggleBot(){
+
+    botActivo =
+    !botActivo;
+
+
+    if(botActivo){
+
+        estadoMercado.innerText =
+        "PANCRACIOXD está operando.";
+
+    }
+
+    else{
+
+        estadoMercado.innerText =
+        "PANCRACIOXD está detenido.";
+
+    }
+
+}
+
+
+function botTick(){
+
+    const nivel =
+    Number(
+        document.getElementById(
+            "botLevel"
+        ).value
+    );
+
+
+    const r =
+    Math.random();
+
+
+    /* FÁCIL */
+
+    if(
+
+        nivel === 1 &&
+
+        r < .30 &&
+
+        bot.saldo >= precioAccion
+
+    ){
+
+        botComprar();
+
+    }
+
+
+    /* NORMAL */
+
+    if(
+
+        nivel === 2 &&
+
+        r < .45 &&
+
+        precioAccion <= precioAnterior &&
+
+        bot.saldo >= precioAccion
+
+    ){
+
+        botComprar();
+
+    }
+
+
+    /* DIFÍCIL */
+
+    if(
+
+        nivel === 3 &&
+
+        r < .60 &&
+
+        precioAccion < precioAnterior &&
+
+        bot.saldo >= precioAccion
+
+    ){
+
+        botComprar();
+
+    }
+
+
+    /* VENTA */
+
+    if(
+
+        r > .70 &&
+
+        bot.acciones > 0
+
+    ){
+
+        botVender();
+
+    }
+
+}
+
+
+function botComprar(){
+
+    if(
+        bot.saldo <
+        precioAccion
+    )
+        return;
+
+
+    bot.saldo -=
+    precioAccion;
+
+    bot.acciones++;
+
+}
+
+
+function botVender(){
+
+    if(
+        bot.acciones <= 0
+    )
+        return;
+
+
+    bot.acciones--;
+
+    bot.saldo +=
+    precioAccion;
+
+}
+
+
+/* =====================================================
+   PATRIMONIO
+===================================================== */
+
+function calcularPatrimonio(){
+
+    return (
+
+        saldo +
+
+        coins *
+        precioCoin +
+
+        acciones *
+        precioAccion
+
+    );
+
+}
+
+
+function calcularPatrimonioBot(){
+
+    return (
+
+        bot.saldo +
+
+        bot.coins *
+        precioCoin +
+
+        bot.acciones *
+        precioAccion
+
+    );
+
+}
+
+
+/* =====================================================
+   INTERFAZ
+===================================================== */
+
+function actualizarUI(){
+
+    saldoEl.innerText =
+    saldo.toFixed(2);
+
+
+    coinsEl.innerText =
+    coins;
+
+
+    accionesEl.innerText =
+    acciones;
+
+
+    precioCoinEl.innerText =
+    "$" +
+    precioCoin.toFixed(4);
+
+
+    precioAccionEl.innerText =
+    "$" +
+    precioAccion.toFixed(2);
+
+
+    precioGrande.innerText =
+    "$" +
+    precioAccion.toFixed(2);
+
+
+    patrimonioEl.innerText =
+    calcularPatrimonio()
+    .toFixed(2);
+
+
+    botSaldoEl.innerText =
+    bot.saldo.toFixed(2);
+
+
+    botAccionesEl.innerText =
+    bot.acciones;
+
+
+    rUserEl.innerText =
+    user || "—";
+
+
+    rUserPatEl.innerText =
+    "$" +
+    calcularPatrimonio()
+    .toFixed(2);
+
+
+    rBotPatEl.innerText =
+    "$" +
+    calcularPatrimonioBot()
+    .toFixed(2);
+
+}
+
+
+/* =====================================================
+   GUARDAR USUARIO
+===================================================== */
+
+function guardar(){
+
+    if(!user)
+        return;
+
+
+    let users =
+    JSON.parse(
+        localStorage.getItem(
+            "fer_users"
+        ) || "{}"
+    );
+
+
+    users[user]={
+
+        pass:pass,
+
+        saldo:saldo,
+
+        coins:coins,
+
+        acciones:acciones
+
+    };
+
+
+    localStorage.setItem(
+
+        "fer_users",
+
+        JSON.stringify(users)
+
+    );
+
+}
+
+
+/* =====================================================
+   CERRAR SESIÓN
+===================================================== */
+
+function cerrarSesion(){
+
+    if(
+
+        !confirm(
+            "¿Seguro que quieres cerrar sesión?"
+        )
+
+    )
+        return;
+
+
+    location.reload();
+
+}
+
+</script>
+
+</body>
+</html>
